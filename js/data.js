@@ -1,7 +1,7 @@
-import { getRandomArrayElement, getRandomInteger } from './util.js';
+import { getRandomArrayElement, getRandomInteger, createCounter } from './util.js';
 
 // Константа, определяющая количество фотографий
-const PHOTOS_COUNT = 25;
+const PHOTOS_COUNT = 5;
 // Константы, определяющие минимальное и максимальное количество комментариев
 const MIN_COMMENT = 0;
 const MAX_COMMENT = 30;
@@ -18,7 +18,6 @@ const MAX_SENTENCES_PER_COMMENT = 2;
 // Массив имён, используемых для подписания авторов комментариев
 const names = [
   'Dmytro',
-  'Alex',
   'Anna',
   'Oleg',
   'Natalia',
@@ -46,26 +45,32 @@ const imageDescriptions = [
   'Парусная лодка, плывущая по спокойному озеру'
 ];
 
-// Функция для формирования текста сообщения из 1 или 2 случайных комментариев.
-// Если выбирается 2 комментария, то они гарантированно будут разными.
-const createTextMessage = (arrSentences) => {
-  // Определяем, сколько комментариев будет в сообщении: 1 или 2
+const createTextMessage = () => {
+// Проверка длинны массива со строками для комментариев, чтобы небыло бесконечного цикла
+  if (comments.length < MAX_SENTENCES_PER_COMMENT) {
+    return 'В массиве с предложениями недостаточно строк для формирования комментария';
+  }
+  // Получение количества строк для текста комментария
   const commentsPerMessage = getRandomInteger(MIN_SENTENCES_PER_COMMENT, MAX_SENTENCES_PER_COMMENT);
-  // Если только один комментарий, возвращаем его
-  if (commentsPerMessage === 1) {
-    return getRandomArrayElement(arrSentences);
+  // Накопительный массив из строк, в будущем станет текстом комментария
+  const arrSentences = [];
+  // Наполение массива из строк уникальными строками
+  while (arrSentences.length < commentsPerMessage) {
+    const randomElement = getRandomArrayElement(comments);
+    // Если в массиве со строками нет элемента то добавь, это реализация уникальности строк между собой
+    if (!arrSentences.includes(randomElement)) {
+      arrSentences.push(randomElement);
+    }
   }
-  // Если два комментария, нужно выбрать уникальные. Второй в последствии может менятся, поэтому let
-  const firstComment = getRandomArrayElement(arrSentences);
-  let secondComment = getRandomArrayElement(arrSentences);
-  // Повторяем генерацию второго индекса, пока он не будет отличаться от первого
-  // !Будет бесконечныный цикл если в массиве строк комментариев будет только одно значение
-  while (secondComment === firstComment) {
-    secondComment = getRandomArrayElement(arrSentences);
-  }
-  // Возвращаем склеенные два уникальных комментария
-  return `${firstComment} ${secondComment}`;
+  // Склеивание уникальных строк в один текст комментария изображения
+  const result = arrSentences.join(' ');
+
+  return result;
 };
+
+// Создание экземпляра функции createCounter, она возвращает число на 1 больше каждый вызов
+// Нужна дя генерации уникальных id комментариев в рамках всех изображений
+const createCommentsId = createCounter();
 
 // Генерация массива комментариев
 const createComments = () => {
@@ -77,9 +82,9 @@ const createComments = () => {
   // Генерируем каждый комментарий
   for (let i = 0; i < messagesCount; i++) {
     messages.push({
-      id: i,
+      id: createCommentsId(),
       avatar: `img/avatar-${getRandomInteger(MIN_AVATAR_NUMBER, MAX_AVATAR_NUMBER)}.svg`,
-      message: createTextMessage(comments),
+      message: createTextMessage(),
       name: getRandomArrayElement(names),
     });
   }

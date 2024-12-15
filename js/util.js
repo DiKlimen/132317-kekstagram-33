@@ -9,4 +9,11 @@ const getRandomInteger = (a, b) => {
 // Функция для получения случайного элемента переданного в аргумент массива
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
-export { getRandomArrayElement, getRandomInteger };
+// Возвращает число на 1 больше каждый вызов, использует замыкание.
+const createCounter = () => {
+  let i = 0;
+
+  return () => i++;
+};
+
+export { getRandomArrayElement, getRandomInteger, createCounter };
