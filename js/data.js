@@ -1,7 +1,7 @@
-import { getRandomArrayElement, getRandomInteger, createCounter } from './util.js';
+import { getRandomArrayElement, getRandomInteger, getRandomUniqueElementsCount, createCounter } from './util.js';
 
 // Константа, определяющая количество фотографий
-const PHOTOS_COUNT = 5;
+const PHOTOS_COUNT = 25;
 // Константы, определяющие минимальное и максимальное количество комментариев
 const MIN_COMMENT = 0;
 const MAX_COMMENT = 30;
@@ -45,23 +45,9 @@ const imageDescriptions = [
   'Парусная лодка, плывущая по спокойному озеру'
 ];
 
+// Создание текста комментария для картинки из уникальных значений массива comments.
 const createTextMessage = () => {
-// Проверка длинны массива со строками для комментариев, чтобы небыло бесконечного цикла
-  if (comments.length < MAX_SENTENCES_PER_COMMENT) {
-    return 'В массиве с предложениями недостаточно строк для формирования комментария';
-  }
-  // Получение количества строк для текста комментария
-  const commentsPerMessage = getRandomInteger(MIN_SENTENCES_PER_COMMENT, MAX_SENTENCES_PER_COMMENT);
-  // Накопительный массив из строк, в будущем станет текстом комментария
-  const arrSentences = [];
-  // Наполение массива из строк уникальными строками
-  while (arrSentences.length < commentsPerMessage) {
-    const randomElement = getRandomArrayElement(comments);
-    // Если в массиве со строками нет элемента то добавь, это реализация уникальности строк между собой
-    if (!arrSentences.includes(randomElement)) {
-      arrSentences.push(randomElement);
-    }
-  }
+  const arrSentences = getRandomUniqueElementsCount(comments, MIN_SENTENCES_PER_COMMENT, MAX_SENTENCES_PER_COMMENT);
   // Склеивание уникальных строк в один текст комментария изображения
   const result = arrSentences.join(' ');
 
@@ -69,49 +55,40 @@ const createTextMessage = () => {
 };
 
 // Создание экземпляра функции createCounter, она возвращает число на 1 больше каждый вызов
-// Нужна дя генерации уникальных id комментариев в рамках всех изображений
 const createCommentsId = createCounter();
 
-// Генерация массива комментариев
-const createComments = () => {
-  // Массив для комментариев к данной фотографии
-  const messages = [];
-  // Определяем случайное число комментариев для этой фотографии
-  const messagesCount = getRandomInteger(MIN_COMMENT, MAX_COMMENT);
+// Создает объект одного комментария для фотографии.
+const createComments = () => ({
+  id: createCommentsId(),
+  avatar: `img/avatar-${getRandomInteger(MIN_AVATAR_NUMBER, MAX_AVATAR_NUMBER)}.svg`,
+  message: createTextMessage(),
+  name: getRandomArrayElement(names),
+});
 
-  // Генерируем каждый комментарий
-  for (let i = 0; i < messagesCount; i++) {
-    messages.push({
-      id: createCommentsId(),
-      avatar: `img/avatar-${getRandomInteger(MIN_AVATAR_NUMBER, MAX_AVATAR_NUMBER)}.svg`,
-      message: createTextMessage(),
-      name: getRandomArrayElement(names),
-    });
-  }
-  return messages;
+// Создает массив объектов комментариев для фотографии
+const generatingComments = () => {
+  const commentsCount = getRandomInteger(MIN_COMMENT, MAX_COMMENT);
+  const commentArray = Array.from({length: commentsCount}, createComments);
+  return commentArray;
 };
 
-// Основная функция для генерации описаний фотографий
-const makePhotoDescriptions = () => {
-  const result = [];
+// Создание уникальных счетчиков.
+const createDescriptionId = createCounter();
+const createPhotoNumber = createCounter();
 
-  // Генерируем описания для каждой фотографии
-  for (let i = 1; i <= PHOTOS_COUNT; i++) {
+// Создает объект одного описания фотографии.
+const createpPotoDescription = () => ({
+  id: createDescriptionId(),
+  url: `photos/${createPhotoNumber}.jpg`,
+  description: getRandomArrayElement(imageDescriptions),
+  likes: getRandomInteger(MIN_LIKES, MAX_LIKES),
+  comments: generatingComments(),
+});
 
-    // Запись в переменную пула комментариев
-    const masseges = createComments();
-
-    // Добавляем объект с данными о фотографии в итоговый результат
-    result.push({
-      id: i,
-      url: `photos/${i}.jpg`,
-      description: getRandomArrayElement(imageDescriptions),
-      likes: getRandomInteger(MIN_LIKES, MAX_LIKES),
-      comments: masseges,
-    });
-  }
-
-  return result;
+// Основная функция, создает массив объектов описаний фотографий
+const generationProtoDescriptions = () => {
+  const protoDescriptionsArray = Array.from({length: PHOTOS_COUNT}, createpPotoDescription);
+  return protoDescriptionsArray;
 };
 
-export {makePhotoDescriptions};
+export { generationProtoDescriptions };

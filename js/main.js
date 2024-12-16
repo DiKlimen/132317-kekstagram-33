@@ -1,4 +1,4 @@
-import { makePhotoDescriptions } from './data.js';
+import { generationProtoDescriptions } from './data.js';
 
 //Вывод массива описаний фотографий в консоль
-console.log(makePhotoDescriptions());
+console.log(generationProtoDescriptions());
