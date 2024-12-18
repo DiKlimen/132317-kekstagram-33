@@ -79,16 +79,16 @@ const createPhotoNumber = createCounter();
 // Создает объект одного описания фотографии.
 const createpPotoDescription = () => ({
   id: createDescriptionId(),
-  url: `photos/${createPhotoNumber}.jpg`,
+  url: `photos/${createPhotoNumber() + 1}.jpg`,
   description: getRandomArrayElement(imageDescriptions),
   likes: getRandomInteger(MIN_LIKES, MAX_LIKES),
   comments: generatingComments(),
 });
 
 // Основная функция, создает массив объектов описаний фотографий
-const generationProtoDescriptions = () => {
+const generationPhotoDescriptions = () => {
   const protoDescriptionsArray = Array.from({length: PHOTOS_COUNT}, createpPotoDescription);
   return protoDescriptionsArray;
 };
 
-export { generationProtoDescriptions };
+export { generationPhotoDescriptions };
