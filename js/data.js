@@ -4,7 +4,7 @@ import { getRandomArrayElement, getRandomInteger, getRandomUniqueElementsCount, 
 const PHOTOS_COUNT = 25;
 // Константы, определяющие минимальное и максимальное количество комментариев
 const MIN_COMMENT = 0;
-const MAX_COMMENT = 30;
+const MAX_COMMENT = 25;
 // Константы, определяющие минимальное и максимальное количество лайков
 const MIN_LIKES = 15;
 const MAX_LIKES = 200;

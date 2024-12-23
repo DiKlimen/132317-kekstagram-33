@@ -1,4 +1,5 @@
 import { generationPhotoDescriptions } from './data.js';
+import { showFullPicture } from './full-picture.js';
 
 // Поиск контейнера в который будем вставлять изображения пользователя
 const picturesContainer = document.querySelector('.pictures');
@@ -14,16 +15,41 @@ const userPictures = generationPhotoDescriptions();
 // Создаю фрамент-контейнер
 const userPicturesFragment = document.createDocumentFragment();
 
-// Перебираю каждый элемент сгенерированного массива
-userPictures.forEach((userPicture) => {
-  const userPictureElement = userPictureTamplate.cloneNode(true); // Создаю клон шаблона.
+// Функция создания одной картинки
+const createPictureElement = (userPicture) => {
+  // Деструктеризация переданного объекта с описание картинки
+  const {url, description, likes, comments} = userPicture;
+  // Создаю клон шаблона.
+  const userPictureElement = userPictureTamplate.cloneNode(true);
   const tagImg = userPictureElement.querySelector('.picture__img');
-  tagImg.src = userPicture.url;
-  tagImg.alt = userPicture.description;
-  userPictureElement.querySelector('.picture__likes').textContent = userPicture.likes;
-  userPictureElement.querySelector('.picture__comments').textContent = userPicture.comments.length;
-  userPicturesFragment.appendChild(userPictureElement); // Добавляю во фрагмен наполенный данными шаблон.
-});
+  // Наполняю клон шаблона информацией из переданного в функцию объекта
+  tagImg.src = url;
+  tagImg.alt = description;
+  userPictureElement.querySelector('.picture__likes').textContent = likes;
+  userPictureElement.querySelector('.picture__comments').textContent = comments.length;
 
-// Добавляю фрагмен в разметку.
-picturesContainer.appendChild(userPicturesFragment);
+  // Функция обработчика событий открытия большой картинки по клику
+  const onPictureElementClick = (evt) => {
+    evt.preventDefault();
+    showFullPicture(userPicture);
+  };
+
+  // Добавление обработчика событий на открытие большой картинки по клику
+  userPictureElement.addEventListener('click', onPictureElementClick);
+
+  return userPictureElement;
+};
+
+// Создание пула картинок
+const renderUserPictures = () => {
+  userPictures.forEach((userPicture) => {
+    const userPictureElement = createPictureElement(userPicture);
+    userPicturesFragment.appendChild(userPictureElement); // Добавляю во фрагмент наполненный данными шаблон.
+  });
+
+  // Добавляем фрагмент в DOM
+  picturesContainer.appendChild(userPicturesFragment);
+};
+
+// Вызов функции для рендеринга картинок
+renderUserPictures();
