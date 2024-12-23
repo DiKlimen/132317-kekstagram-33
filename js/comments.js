@@ -1,5 +1,7 @@
-// Количество комментариев в порции
 const COMMENTS_BATCH_SIZE = 5;
+
+let currentIndex = 0;
+let comments = [];
 
 // Поиск контейнера в который потом буду добавлять комментарии
 const socialCommentsContainer = document.querySelector('.social__comments');
@@ -9,6 +11,7 @@ const socialCommentTemplate = document.querySelector('#social-comment')
   .querySelector('.social__comment');
 
 const commentsLoader = document.querySelector('.comments-loader');
+const commentShownCount = document.querySelector('.social__comment-shown-count');
 
 // Создание одного комментария и наполнение его контентом
 const createPictureComment = (comment) => {
@@ -22,39 +25,39 @@ const createPictureComment = (comment) => {
   return socialCommentElement;
 };
 
-// Рендеринг комментариев
-const renderPictureComment = (comments) => {
-  // Очищаем контейнер комментариев
+// Рендерит комментарии и добавляет их в дом.
+const renderComments = () => {
   socialCommentsContainer.innerHTML = '';
 
-  // Текущий индекс, с которого начнется выборка комментариев
-  let currentIndex = 0;
+  const commentsBatch = comments.slice(0, currentIndex + COMMENTS_BATCH_SIZE);
 
-  // Функция для загрузки следующей порции комментариев по клику "Загрузить еще"
-  const loadMoreComments = () => {
-    // Вычисляем следующую порцию комментариев
-    const commentsBatch = comments.slice(currentIndex, currentIndex + COMMENTS_BATCH_SIZE);
+  commentsBatch.forEach((comment) => {
+    const pictureComment = createPictureComment(comment);
+    socialCommentsContainer.appendChild(pictureComment);
+  });
 
-    // Создаем и добавляем комментарии в контейнер
-    commentsBatch.forEach((comment) => {
-      const pictureComment = createPictureComment(comment);
-      socialCommentsContainer.appendChild(pictureComment);
-    });
-
-    // Смещаем индекс для следующей порции
-    currentIndex += COMMENTS_BATCH_SIZE;
-
-    // Если больше нет комментариев для загрузки, скрываем кнопку
-    if (currentIndex >= comments.length) {
-      commentsLoader.classList.add('hidden');
-    }
-  };
-
-  // Рендерим первую порцию сразу
-  loadMoreComments();
-
-  // Добавляю обработчик загрузки порции комметариев на клик по кнопку "Загрузить еще"
-  commentsLoader.addEventListener('click', loadMoreComments);
+  if (currentIndex + COMMENTS_BATCH_SIZE >= comments.length) {
+    commentsLoader.classList.add('hidden');
+    commentShownCount.textContent = comments.length;
+  } else {
+    commentsLoader.classList.remove('hidden');
+    commentShownCount.textContent = currentIndex + COMMENTS_BATCH_SIZE;
+  }
 };
 
-export { renderPictureComment };
+// При клике на миниатюру вызываетя эта функция (файл full-picture), в нее передается массив комментариев.
+const renderPictureComments = (data) => {
+  currentIndex = 0;
+  comments = data.slice();
+  renderComments(comments);
+};
+
+const onLoadMoreCommentsClick = () => {
+  currentIndex += COMMENTS_BATCH_SIZE;
+  renderComments();
+};
+
+// навешиваем логику на клик кнопки "Загрузить еще"
+commentsLoader.addEventListener('click', onLoadMoreCommentsClick);
+
+export { renderPictureComments };

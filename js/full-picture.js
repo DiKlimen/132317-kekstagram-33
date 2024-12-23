@@ -1,5 +1,5 @@
 import {isEscapeKey, isEnterKey} from './util.js';
-import {renderPictureComment} from './comments.js';
+import {renderPictureComments} from './comments.js';
 
 const bigPicture = document.querySelector('.big-picture');
 const bigPictureImage = document.querySelector('.big-picture__img > img');
@@ -37,11 +37,6 @@ const showFullPicture = ({url, likes, description, comments}) => {
   bigPicture.classList.remove('hidden');
   document.body.classList.add('modal-open');
 
-  // Навешивание логики при закритии большой картинки при клике на крестик
-  bigPictureCloselElement.addEventListener('click', () => {
-    closeBigPicture();
-  });
-
   // Закрытие большой картинки при нажатии кнопки Escape
   document.addEventListener('keydown', onDocumentKeydown);
 
@@ -50,8 +45,12 @@ const showFullPicture = ({url, likes, description, comments}) => {
   socialCaption.textContent = description;
   commentTotalCount.textContent = comments.length;
 
-  renderPictureComment(comments);
+  renderPictureComments(comments);
 };
 
+// Навешивание логики при закритии большой картинки при клике на крестик
+bigPictureCloselElement.addEventListener('click', () => {
+  closeBigPicture();
+});
 
 export {showFullPicture};
