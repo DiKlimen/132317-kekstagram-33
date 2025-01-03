@@ -520,6 +520,7 @@ main {
   display: block;
   max-width: 600px;
   max-height: 600px;
+  transition: transform 0.3s ease, max-width 0.3s ease, max-height 0.3s ease;
 }
 
 
@@ -694,6 +695,21 @@ main {
   color: #000000;
 
   border-radius: 5px;
+}
+
+.text__rules {
+  text-transform: none;
+  list-style: none;
+  text-align: left;
+  padding-left: 70px;
+}
+
+.text__rules-item--good {
+  color: green;
+}
+
+.text__rules-item--bad {
+ color: red;
 }
 
 .text__description {
