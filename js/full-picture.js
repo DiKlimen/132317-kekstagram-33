@@ -20,13 +20,13 @@ const closeBigPicture = () => {
   bigPicture.classList.add('hidden');
   document.body.classList.remove('modal-open');
 
-  // Закрыть каритнку при фокусе крестика и нажатии кнопки Enter
-  bigPictureCloselElement.addEventListener('keydown', (evt) => {
-    if (isEnterKey(evt)) {
-      evt.preventDefault();
-      bigPicture.classList.add('hidden');
-    }
-  });
+  // // Закрыть каритнку при фокусе крестика и нажатии кнопки Enter
+  // bigPictureCloselElement.addEventListener('keydown', (evt) => {
+  //   if (isEnterKey(evt)) {
+  //     evt.preventDefault();
+  //     bigPicture.classList.add('hidden');
+  //   }
+  // });
 
   // Удаление обработчика, который закрывает картинку при нажатии кнопки Escape
   document.removeEventListener('keydown', onDocumentKeydown);
